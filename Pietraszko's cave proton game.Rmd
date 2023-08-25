@@ -1,0 +1,106 @@
+# This is the proton game!: Pietraszko's cave
+
+*Packages needed to be downloaded: dplyr, proton, and tidyverse (ofc rmarkdown!)* *Our data is in proton package, let's get into it :)*
+
+### Rmarkdown packages 
+
+```{r}
+install.packages("rmarkdown")
+library(rmarkdown)
+```
+
+### Dpylr for data manipulation
+
+```{r}
+install.packages("dplyr")
+library(dplyr)
+```
+
+### Tidyverse for data analytics/science
+
+```{r}
+install.packages("tidyverse")
+library(tidyverse)
+```
+
+### Start game & load your library to play
+
+```{r}
+install.packages("proton")
+library(proton)
+proton()
+```
+
+## First problem: find John's login
+
+```{r}
+#look at the employees dataset
+view(employees)
+#finding john
+filter(employees, name == "John")
+#filter is for filtering data
+#this going to give out 2 johns, his last name is Insecure (lol)
+proton(action = "login", login = "johnins")
+```
+
+## Second problem: find John's password
+
+##### this one was interesting
+
+```{r}
+for (i in top1000passwords) {
+  answer <- proton(action = "login", login = "johnins", password = i)
+  if (length(grep(pattern = "Success", x = answer)) == 1)
+    print(i)
+}
+```
+
+**explanation:**
+
+1.  We used 'for' function because we will be looped, called for-loop so we don't have to repeat our code and cause code block.
+2.  So, it's: for (variable in sequence), sequence is the database which the for-loop iterates, variable is an item of that collection at each iteration (like something to use so we can print the answer?)
+3.  After that there will be {}, we put our codes in there to run the loop
+4.  First one is just to put the sequence that will give us the answer: proton that was given; then put the password = i so we can loop it.
+
+**explain the if:** return if the length of the variable we're looking for has 1 element, grep is to find the pattern of our answer, in this case, where our pattern is when the whole sequence "answer" w proton gives back "success"; hence: x = answer. finally, print and end game.
+
+## Third problem: check Pietraszko's most often visited proton server
+
+##### this one is uhhhh (help)
+
+##### at first i thougt Pietraszko and John were the same person so i was so stressed ahaha
+
+```{r}
+group_by(filter(logs, login == "johnins"), host)
+#that's wrong, btw, since this one is just using johnins of john
+#we have to find Pietraszko login first
+filter(employees, surname ==  "Pietraszko")
+#login found! time to check his servers
+yeah_pie <- group_by(filter(logs, login == "slap"), host)
+summarize(yeah_pie, count = n())
+#plug in
+proton(action = "server", host = "194.29.178.16")
+```
+
+**explanation:**
+
+1.  We do group by to group the stuffs in first: we group everything based on the host column so we would know where the man uses the most, then filter only where slap is being used to login. group_by then filter in the bracket because we do filter first.
+2.  Then group by is just a grouped tbl (tabular data) where operations are performed "by group", we have to do summarize to shorten it down, but what are we going to summarized the groups as? which function? which calculation? in this case, we want to count the group elements, so we do 'count = n()'.
+3.  Why this? because n() count the number of observations in a group so 'count = n()' count all observations in the groups
+
+## Final problem: find Pie's password then hack ehehe
+
+```{r}
+view(bash_history)
+unique(grep(pattern = " ", x = bash_history, value = TRUE, invert = TRUE))
+# we have some candidates so try them and see which works!
+# use the 2nd problem formula
+proton(action = "login", login = "slap", password = "DHbb7QXppuHnaXGN")
+```
+
+**explanation:**
+
+1.  Unique second line ultimately is to find the pattern and invert the match, they want to ask for string before space, we do pattern = " ", which is strings, but there are still many strings, we want to make the value match it exactly"Value = TRUE" and "invert = TRUE" so they would give out index without any random sign like plus or slash, keep it all numbers and letters.
+2.  And of course they have to be unique, hence the unique function!
+
+### *and we're done!*
