@@ -1,0 +1,73 @@
+---
+title: "dictionary-game?"
+output: html_document
+date: "2023-12-21"
+---
+
+```{r setup, include=FALSE}
+knitr::opts_chunk$set(echo = TRUE)
+```
+
+
+```{r}
+install.packages('BetaBit')
+library(BetaBit)
+```
+
+
+```{r}
+data(BetaBit)
+frequon(message(roses))
+frequon(subject = "Re: Interested?", content = roses)
+```
+
+
+```{r}
+install.packages("dplyr")
+library(dplyr)
+install.packages("tidyverse")
+library(tidyverse)
+```
+
+
+```{r}
+order(EnglishLetterFrequency,decreasing = TRUE)
+frequon(message(roses))
+frequon(hint=TRUE)
+```
+
+
+```{r}
+roses_help <- gsub(pattern = "\\W+", replacement = ' ', x = roses, perl = TRUE)
+```
+Explanation: this gsub confused me a bit since this is the first time i use this. so, similar to grep, but gsub is identify the pattern then replace, grep is just finding it. the pattern in this case is "\\W+": meaning  ‘\\w’ denotes word character that may include lower case letters, upper case letters, and digits. The ‘+’ sign indicates that there might be one or more of those characters. (it's a regular expression in r)
+
+We're going to replace those pattern by space, as the requirement is only to have letters, and x is roses, our data comes from and being replaced. for the perl part, tbh i'm not sure about this one, but definition: Perl Compatible Regular Expressions (PCRE) is a library written in C, which implements a regular expression engine, inspired by the capabilities of the Perl programming language. putting this true makes the process smoother.
+
+```{r}
+tolower(roses_help)
+#put all the letters in lower case so it is easier to see lol
+roses_two <- table(factor(strsplit(roses_help, '')[[1]],levels = letters[1:26]))
+roses_two_two <- as.vector(roses_two)
+```
+Explaination: so after we done transforming the data into letters, we now transform them into single letters, then into numbers on the alphabet, in tables, and turn them into vectors as needed to calculate freq
+
+```{r}
+roses_two <- factor(strsplit(roses_help, '')[[1]])
+roses_two <- factor(strsplit(roses_help, '')[[1]],levels = letters[1:26])
+roses_two <- table(factor(strsplit(roses_help, '')[[1]],levels = letters[1:26]))
+```
+So to explan, the first code: first we have to split all the words or a bunch of letters into individual so we can count properly: we use strsplit so we can split string vectors (cuz roses_help is a vector atm), and to split them into letters we do "" as the syntax for the spliting. next factor to encode our letter into numbers so we have our x in the strsplit already, so we do [[1]] to get back a single entry, and [ with one index returns a list of length 1, then level is we turn letters into numbers from 1:26 so the letters can be catagorized (kinda like groupby?)
+
+Finally, put them in table form or else it would be crazy lol, no pattern. after than, change the table back to vector by as.vector under a new name so you can go back and reference to it
+
+```{r}
+roses_letter <- gsub(pattern = "\\W+", replacement ='', x=roses, perl=TRUE)
+roses_letter <- tolower(roses_letter)
+roses_table  <- table(factor(strsplit(roses_letter, '')[[1]], levels=letters[1:26]))
+freq <- as.vector(roses_table)
+names(freq) <- names(roses_table)
+frequon(subject = "Re: Frequencies", content = freq)
+#OKAY really has to be careful with space or no space huhu
+```
+
